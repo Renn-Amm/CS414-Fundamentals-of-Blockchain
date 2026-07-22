@@ -5,7 +5,6 @@ from ipv8.configuration import ConfigBuilder, default_bootstrap_defs
 from ipv8.util import create_event_with_signals
 from ipv8_service import IPv8
 from algorithms import *
-from algorithms.blockchain import BlockchainNode
 from da_types import Blockchain
 
 
@@ -13,7 +12,6 @@ def get_algorithm(name: str) -> Blockchain:
     algorithms = {
         'echo': EchoAlgorithm,
         'election': RingElection,
-        'blockchain': BlockchainNode,
     }
     if name not in algorithms.keys():
         raise Exception(f'Cannot find select algorithm with name {name}')
