@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Generated IPv8 keys
+*.pem
+
+# Docker
+docker-compose.override.yml
+
+# Local runtime files
+*.pid
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Misc
+*.swp
+*.swo
+*~
