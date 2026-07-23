@@ -1,4 +1,4 @@
-# Assignment 3 — Gossip on Local Peer Topologies
+# Assignment 3 
 
 100 peer nodes, three topology types (sparse, dense, fully connected), three
 gossip strategies (push, pull, hybrid). Full details in [`REPORT.md`](REPORT.md).
