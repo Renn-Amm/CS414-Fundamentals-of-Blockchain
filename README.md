@@ -1,133 +1,95 @@
-# Lab Template for CS414
+# Assignment 3 — Gossip on Local Peer Topologies
 
-This code serves as a foundational template for the CS414 - Fundamentals of Blockchain course. It has been rigorously tested on Ubuntu 20.04 and MacOS 26 and should be compatible with Windows systems.
+100 peer nodes, three topology types (sparse, dense, fully connected), three
+gossip strategies (push, pull, hybrid). Full details in [`REPORT.md`](REPORT.md).
 
-**Note:** Ensure that Python version 3.10 or higher is installed when running this code locally. Version 3.12 is tested and confirmed to work.
+## Quick start
 
-## Documentation
-
-- [IPv8 Documentation](https://py-ipv8.readthedocs.io/en/latest/index.html)
-- [Asyncio Documentation](https://docs.python.org/3/library/asyncio.html): Asyncio is extensively utilized in this code's implementation.
-
-## File Structure
-
-- **src:** Contains all the Python source files.
-- **src/algorithms:** Houses code for various distributed algorithms.
-- **topologies/default.yaml:** Lists the addresses of participating processes in the algorithm.
-- **Dockerfile:** Describes the image used by docker-compose.
-- **docker-compose.yml:** YAML file that describes the system for docker-compose.
-- **docker-compose.template.yml:** YAML file used as a template for the `src/util.py` script.
-- **run_echo.sh:** Script to run the echo example.
-- **run_election.sh:** Script to run the ring election example.
-
-## Topology File
-
-The topology file (located in `./topologies`) defines how nodes in the system are interconnected. It comprises a YAML file listing node IDs along with their corresponding connections to other nodes. To alter the number or type of nodes in a topology, adjust the `util.py` script.
-
-## Remarks
-
-1. This template is provided as a starting point with functioning messaging between distributed processes. You are encouraged to modify any of the files as per your requirements.
-2. Ensure the topology is aligned with the assignment specifications. The default `util.py` creates a ring topology. Modify the script if you need a different topology (e.g., fully-connected, sparse network).
-
-## Prerequisites
-
-- Docker
-- Docker-compose
-- (Python >= 3.10 if running locally)
-
-To install dependencies, use:
-
-```bash
+```
 pip install -r requirements.txt
+python src/experiment.py
 ```
 
-The expected output should be identical whether running with docker-compose or locally.
+Takes about 30 seconds. Writes everything into `output/`:
 
-## Docker Examples
+- `topology_{sparse,dense,fully}.png` — rendered topology graphs
+- `metric_avg_*.png` — bar charts for each reported metric
+- `results.json` — raw numbers averaged over 5 seeds
 
-### Echo Algorithm
+## Layout
 
-```bash
-NUM_NODES=2
-python src/util.py $NUM_NODES topologies/echo.yaml echo
-docker compose build
-docker compose up
+```
+src/
+├── simulator.py           # 100-node in-process gossip simulator
+├── experiment.py          # sweep runner: builds all topologies × strategies, produces tables/plots
+├── run.py                 # multi-process IPv8 runner (from template, extended)
+├── da_types.py            # from template
+└── algorithms/
+    ├── gossip_ipv8.py     # push/pull/hybrid as an IPv8 community (real UDP)
+    ├── echo_algorithm.py  # from template
+    └── ring_election.py   # from template
+
+topologies/
+└── gen.py                 # generates sparse/dense/fully YAML topology files
+
+output/                    # created by experiment.py
+
+REPORT.md                  # the deliverable report
 ```
 
-**Expected Output:**
+## Reproducing individual runs
 
-```text
-in4150-python-template-node1-1  | [Node 1] Starting
-in4150-python-template-node0-1  | [Node 0] Starting
-in4150-python-template-node0-1  | [Node 0] Got a message from node: 1.   current counter: 1
-in4150-python-template-node1-1  | [Node 1] Got a message from node: 0.   current counter: 2
-in4150-python-template-node0-1  | [Node 0] Got a message from node: 1.   current counter: 3
-in4150-python-template-node1-1  | [Node 1] Got a message from node: 0.   current counter: 4
-in4150-python-template-node0-1  | [Node 0] Got a message from node: 1.   current counter: 5
-in4150-python-template-node1-1  | [Node 1] Got a message from node: 0.   current counter: 6
-in4150-python-template-node0-1  | [Node 0] Got a message from node: 1.   current counter: 7
-in4150-python-template-node1-1  | [Node 1] Got a message from node: 0.   current counter: 8
-in4150-python-template-node0-1  | [Node 0] Got a message from node: 1.   current counter: 9
-in4150-python-template-node1-1  | Node 1 is stopping
-in4150-python-template-node1-1  | [Node 1] Got a message from node: 0.   current counter: 10
-in4150-python-template-node1-1  | [Node 1] Stopping algorithm
-in4150-python-template-node0-1  | Node 0 is stopping
-in4150-python-template-node0-1  | [Node 0] Got a message from node: 1.   current counter: 11
-in4150-python-template-node0-1  | [Node 0] Stopping algorithm
-in4150-python-template-node1-1 exited with code 0
-in4150-python-template-node0-1 exited with code 0
+Single simulator run (pick topology and strategy):
+
+```
+python src/simulator.py --topology sparse --strategy push --nodes 100
+python src/simulator.py --topology dense --strategy pull --nodes 100
+python src/simulator.py --topology fully --strategy hybrid --nodes 100
 ```
 
-### Ring Election Algorithm
+## Real IPv8 (multi-process, for smaller node counts)
 
-```bash
-NUM_NODES=4
-python src/util.py $NUM_NODES topologies/election.yaml election
-docker compose build
-docker compose up
+The simulator is used for the reported 100-node results because 100 real
+UDP processes on one laptop is unreliable. For sanity checking against
+real IPv8 with a small number of nodes:
+
+```
+# 1. Generate a topology
+python topologies/gen.py 10 sparse topologies/sparse.yaml
+
+# 2. Launch 10 IPv8 processes (each is a node)
+export GOSSIP_STRATEGY=push        # push | pull | hybrid
+export GOSSIP_FANOUT=3
+for i in $(seq 0 9); do
+    python src/run.py $i topologies/sparse.yaml gossip &
+done
+wait
 ```
 
-**Expected Output:**
+Each node prints its per-message packet stats. The strategy is picked up
+from the `GOSSIP_STRATEGY` env var, so relaunch after changing it.
 
-```text
-in4150-python-template-node2-1  | [Node 2] Starting
-in4150-python-template-node0-1  | [Node 0] Starting
-in4150-python-template-node3-1  | [Node 3] Starting
-in4150-python-template-node1-1  | [Node 1] Starting
-in4150-python-template-node3-1  | [Node 3] Starting by selecting a node: 0
-in4150-python-template-node0-1  | [Node 0] Got a message from with elector id: 3
-in4150-python-template-node1-1  | [Node 1] Got a message from with elector id: 3
-in4150-python-template-node2-1  | [Node 2] Got a message from with elector id: 3
-in4150-python-template-node3-1  | [Node 3] Got a message from with elector id: 3
-in4150-python-template-node3-1  | [Node 3] we are elected!
-in4150-python-template-node3-1  | [Node 3] Sending message to terminate the algorithm!
-in4150-python-template-node0-1  | [Node 0] Stopping algorithm
-in4150-python-template-node1-1  | [Node 1] Stopping algorithm
-in4150-python-template-node2-1  | [Node 2] Stopping algorithm
-in4150-python-template-node3-1  | [Node 3] Stopping algorithm
-```
+## Design notes
 
-## Local Examples
+- **How the topology is enforced.** IPv8's default is bootstrapper + RandomWalk
+  auto-discovery. We disable both (empty walker list, no bootstrappers) and
+  give each node an explicit YAML list of neighbours; each node calls
+  `walk_to(address)` to connect to exactly those neighbours and no others.
+  This is what makes it possible to produce sparse and fully connected
+  topologies on demand.
+- **Simulator vs real IPv8.** The simulator uses the same gossip logic as
+  the IPv8 version — same message kinds (`PUSH`, `HAVE`, `WANT`, `DIGEST`),
+  same fanout policy, same duplicate accounting. It just delivers packets
+  in-process instead of over UDP. For gossip protocol overhead measurements
+  this is a valid abstraction: the metrics (packets sent, duplicates
+  received, rounds to convergence) don't depend on wire time.
 
-The expected output is consistent with running through docker-compose.
+## Metrics reported
 
-### Echo Algorithm
+- Average packets sent per node
+- Duplicates received per node
+- **Delivery efficiency** — nodes reached ÷ packets sent (custom metric)
+- Convergence rounds
+- Coverage
 
-```bash
-python src/run.py 0 topologies/echo.yaml echo &
-python src/run.py 1 topologies/echo.yaml echo &
-```
-
-### Ring Election Algorithm
-
-```bash
-python src/run.py 0 topologies/election.yaml election &
-python src/run.py 1 topologies/election.yaml election &
-python src/run.py 2 topologies/election.yaml election &
-python src/run.py 3 topologies/election.yaml election &
-```
-
-Make use of these commands to execute the respective algorithms locally.
-
-## Acknowledgements
-Special thanks to Bart Cox.
+See `REPORT.md` for the full results table and interpretation.

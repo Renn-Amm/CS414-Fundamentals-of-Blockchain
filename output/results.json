@@ -1,0 +1,110 @@
+[
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 2.01,
+    "avg_duplicates_per_node": 0.9,
+    "avg_total_packets": 201,
+    "avg_total_duplicates": 90,
+    "avg_convergence_rounds": 7.4,
+    "avg_delivery_efficiency": 0.4975124378109453,
+    "avg_coverage": 1.0,
+    "topology": "sparse",
+    "strategy": "push"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 3.714,
+    "avg_duplicates_per_node": 0.0,
+    "avg_total_packets": 371.4,
+    "avg_total_duplicates": 0,
+    "avg_convergence_rounds": 23.2,
+    "avg_delivery_efficiency": 0.26927944065279347,
+    "avg_coverage": 1.0,
+    "topology": "sparse",
+    "strategy": "pull"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 3.93,
+    "avg_duplicates_per_node": 0.0,
+    "avg_total_packets": 393,
+    "avg_total_duplicates": 0,
+    "avg_convergence_rounds": 20.2,
+    "avg_delivery_efficiency": 0.2544529262086514,
+    "avg_coverage": 1.0,
+    "topology": "sparse",
+    "strategy": "hybrid"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 2.856,
+    "avg_duplicates_per_node": 1.914,
+    "avg_total_packets": 285.6,
+    "avg_total_duplicates": 191.4,
+    "avg_convergence_rounds": 7.2,
+    "avg_delivery_efficiency": 0.3333333333333333,
+    "avg_coverage": 0.952,
+    "topology": "dense",
+    "strategy": "push"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 15.964,
+    "avg_duplicates_per_node": 0.0,
+    "avg_total_packets": 1596.4,
+    "avg_total_duplicates": 0,
+    "avg_convergence_rounds": 12.6,
+    "avg_delivery_efficiency": 0.06317854817536304,
+    "avg_coverage": 1.0,
+    "topology": "dense",
+    "strategy": "pull"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 4.68,
+    "avg_duplicates_per_node": 0.0,
+    "avg_total_packets": 468,
+    "avg_total_duplicates": 0,
+    "avg_convergence_rounds": 19.6,
+    "avg_delivery_efficiency": 0.20341902257483138,
+    "avg_coverage": 0.952,
+    "topology": "dense",
+    "strategy": "hybrid"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 2.814,
+    "avg_duplicates_per_node": 1.886,
+    "avg_total_packets": 281.4,
+    "avg_total_duplicates": 188.6,
+    "avg_convergence_rounds": 6.8,
+    "avg_delivery_efficiency": 0.3333333333333333,
+    "avg_coverage": 0.938,
+    "topology": "fully",
+    "strategy": "push"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 16.374000000000002,
+    "avg_duplicates_per_node": 0.0,
+    "avg_total_packets": 1637.4,
+    "avg_total_duplicates": 0,
+    "avg_convergence_rounds": 12.8,
+    "avg_delivery_efficiency": 0.06134755489304203,
+    "avg_coverage": 1.0,
+    "topology": "fully",
+    "strategy": "pull"
+  },
+  {
+    "seeds": 5,
+    "avg_packets_per_node": 4.61,
+    "avg_duplicates_per_node": 0.0,
+    "avg_total_packets": 461,
+    "avg_total_duplicates": 0,
+    "avg_convergence_rounds": 18.4,
+    "avg_delivery_efficiency": 0.20347292578965842,
+    "avg_coverage": 0.938,
+    "topology": "fully",
+    "strategy": "hybrid"
+  }
+]
